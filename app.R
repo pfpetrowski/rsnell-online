@@ -3,15 +3,22 @@ library(rsnell)
 
 
 ui <- fluidPage(
+  
+  #Title of App
   titlePanel("Rsnell Online"),
   
+  #Layout
   sidebarLayout(
-    sidebarPanel("Sidebar",
+    
+    #Inputs in the sidebar
+    sidebarPanel("Inputs",
+
                  #File input
                  fileInput(inputId ="File",
                            label = "Choose csv file",
                            accept = c(".csv")
                            ),
+                 
                  # Horizontal line
                  tags$hr(),
                  
@@ -23,23 +30,42 @@ ui <- fluidPage(
                               selected = ","),
                  
                  ),
-    mainPanel("Main",
-              textOutput("results"))
+    
+    #Outputs in the main panel
+    mainPanel(h3("Snell Scores"),
+              tableOutput("data"),
+              tableOutput("snellscores"))
   )
   
 )
 
+
+
 server <- function(input, output){
   
-  output$results <- renderText({
+  #display the input data back to the user
+  output$data <- renderTable({
     
-    req(input$file)
+    req(input$File)
     
-    freqtable <- read.csv(input$file,
+    freqtable <- read.csv(input$File$datapath,
                           header = TRUE,
                           sep = input$sep)
+    return(freqtable)
+  })
+  
+  #Display the snell scores
+  output$snellscores <- renderTable({
     
-    scores <- snell(freqtable)
+    req(input$File)
+    
+    df <- read.csv(input$File$datapath,
+                   sep = input$sep)
+    
+    scores <- snell(df)
+    
+    scores <- data.frame("Category" = names(scores),
+                         "Score" = scores)
     
     return(scores)
     
