@@ -29,6 +29,15 @@ ui <- fluidPage(
                                           Space = " "),
                               selected = ","),
                  
+                 # Horizontal line
+                 tags$hr(),
+                 
+                 # Input: Select if rownames are present
+                 radioButtons("rownames", "Row Names",
+                              choices = c(True = TRUE,
+                                          False = FALSE),
+                              selected = FALSE),
+                 
                  ),
     
     #Outputs in the main panel
@@ -48,9 +57,17 @@ server <- function(input, output){
     
     req(input$File)
     
-    freqtable <- read.csv(input$File$datapath,
-                          header = TRUE,
-                          sep = input$sep)
+    if (input$rownames == TRUE){
+      rownames = 1
+    }
+    else{
+      rownames = NULL
+    }
+    
+    freqtable <- read.table(input$File$datapath,
+                            header = TRUE,
+                            sep = input$sep,
+                            row.names = rownames)
     return(freqtable)
   })
   
@@ -59,10 +76,19 @@ server <- function(input, output){
     
     req(input$File)
     
-    df <- read.csv(input$File$datapath,
-                   sep = input$sep)
+    if (input$rownames == TRUE){
+      rownames = 1
+    }
+    else{
+      rownames = NULL
+    }
     
-    scores <- snell(df)
+    freqtable <- read.table(input$File$datapath,
+                            header = TRUE,
+                            sep = input$sep,
+                            row.names = rownames)
+    
+    scores <- snell(freqtable)
     
     scores <- data.frame("Category" = names(scores),
                          "Score" = scores)
