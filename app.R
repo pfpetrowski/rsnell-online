@@ -11,7 +11,8 @@ ui <- fluidPage(
   sidebarLayout(
     
     #Inputs in the sidebar
-    sidebarPanel("Inputs",
+    sidebarPanel(h3("Inputs"),
+                 helpText("Choose a frequency table to evaluate. Rows should be sugroups and columns should be categories."),
 
                  #File input
                  fileInput(inputId ="File",
@@ -22,15 +23,16 @@ ui <- fluidPage(
                  # Horizontal line
                  tags$hr(),
                  
+                 #Help text
+                 helpText("Use the below parameters to specify the formating of your table.
+                          A header containing the category names is required."),
+                 
                  # Input: Select separator
                  radioButtons("sep", "Separator",
                               choices = c(Comma = ",",
                                           Tab = "\t",
                                           Space = " "),
                               selected = ","),
-                 
-                 # Horizontal line
-                 tags$hr(),
                  
                  # Input: Select if rownames are present
                  radioButtons("rownames", "Row Names",
